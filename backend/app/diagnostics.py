@@ -4,11 +4,20 @@ Ensures strict confidentiality - never logs API keys, JWT secrets, or sensitive 
 
 import sys
 
+SENSITIVE_KEYS = {"password", "secret", "token", "authorization", "api_key", "groq_api_key", "geoapify_api_key", "openweather_api_key", "tavily_api_key", "google_maps_api_key", "mysql_password"}
+
+
+def _sanitize_value(k: str, v: str) -> str:
+    if any(sk in str(k).lower() for sk in SENSITIVE_KEYS):
+        return "[REDACTED]"
+    return str(v)
+
+
 def log_event(category: str, message: str, details: dict = None):
     """Format and print structured diagnostic logs."""
     detail_str = ""
     if details:
-        parts = [f"{k}={v}" for k, v in details.items()]
+        parts = [f"{k}={_sanitize_value(k, v)}" for k, v in details.items()]
         detail_str = " | " + " | ".join(parts)
     print(f"[{category.upper()}] {message}{detail_str}", flush=True)
 

@@ -16,22 +16,50 @@ _pool = None
 def get_pool():
     global _pool
     if _pool is None:
-        _pool = pooling.MySQLConnectionPool(
-            pool_name="voyageai_pool",
-            pool_size=5,
-            host=config.MYSQL_HOST,
-            port=config.MYSQL_PORT,
-            database=config.MYSQL_DATABASE,
-            user=config.MYSQL_USER,
-            password=config.MYSQL_PASSWORD,
-            autocommit=True,
-        )
+        try:
+            db_kwargs = {
+                "pool_name": "voyageai_pool",
+                "pool_size": 5,
+                "host": config.MYSQL_HOST,
+                "port": config.MYSQL_PORT,
+                "database": config.MYSQL_DATABASE,
+                "user": config.MYSQL_USER,
+                "password": config.MYSQL_PASSWORD,
+                "autocommit": True,
+            }
+
+            ssl_ca = getattr(config, "MYSQL_SSL_CA", None)
+            host_lower = (config.MYSQL_HOST or "").lower()
+
+            if ssl_ca and ssl_ca.strip():
+                db_kwargs["ssl_ca"] = ssl_ca.strip()
+                db_kwargs["ssl_verify_cert"] = True
+                db_kwargs["ssl_disabled"] = False
+            elif host_lower in ("localhost", "127.0.0.1", "::1"):
+                # Local development connection without SSL
+                db_kwargs["ssl_disabled"] = True
+            else:
+                # Production remote connection requires CA certificate verification
+                raise ValueError(
+                    "MYSQL_SSL_CA environment variable is missing. "
+                    "Production MySQL connection to remote host requires a valid CA certificate path with ssl_verify_cert enabled."
+                )
+
+            _pool = pooling.MySQLConnectionPool(**db_kwargs)
+        except Exception as e:
+            print(f"[DATABASE ERROR] Failed to initialize MySQL connection pool ({config.MYSQL_HOST}:{config.MYSQL_PORT}/{config.MYSQL_DATABASE}): {e}", flush=True)
+            raise RuntimeError(f"Database connection failed: Could not connect to MySQL host '{config.MYSQL_HOST}:{config.MYSQL_PORT}'. Detail: {e}") from e
     return _pool
 
 
 @contextmanager
 def get_cursor(dictionary=True):
-    conn = get_pool().get_connection()
+    try:
+        pool = get_pool()
+        conn = pool.get_connection()
+    except Exception as e:
+        print(f"[DATABASE ERROR] Failed to acquire MySQL connection from pool: {e}", flush=True)
+        raise RuntimeError(f"Database connection error: Unable to connect to MySQL host '{config.MYSQL_HOST}'.") from e
     cursor = conn.cursor(dictionary=dictionary)
     try:
         yield cursor
@@ -188,8 +216,9 @@ def init_db():
     try:
         for stmt in statements:
             execute(stmt)
+        print(f"[DATABASE] Tables initialized successfully on host '{config.MYSQL_HOST}'.", flush=True)
     except Exception as e:
-        print(f"[Warning] Database initialization warning (MySQL connection may be unconfigured): {e}")
+        print(f"[DATABASE ERROR] Initialization warning (MySQL connection check): {e}", flush=True)
 
 
 def parse_json(val):

@@ -1,5 +1,5 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-
+export const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+console.log("API URL:", API_BASE_URL);
 function getToken() {
   return localStorage.getItem('voyage_token');
 }
@@ -21,7 +21,7 @@ async function request(path, { method = 'GET', body, headers = {}, auth = true }
   }
   let res;
   try {
-    res = await fetch(`${API_URL}${path}`, {
+    res = await fetch(`${API_BASE_URL}${path}`, {
       method,
       headers: finalHeaders,
       body: body ? JSON.stringify(body) : undefined,

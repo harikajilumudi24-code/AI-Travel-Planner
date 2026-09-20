@@ -44,11 +44,16 @@ MYSQL_PORT = int(_get_env("MYSQL_PORT", "3306"))
 MYSQL_DATABASE = _get_env("MYSQL_DATABASE", "voyageai")
 MYSQL_USER = _get_env("MYSQL_USER", "voyage")
 MYSQL_PASSWORD = _get_env("MYSQL_PASSWORD", "voyagepass")
+MYSQL_SSL_CA = _get_env("MYSQL_SSL_CA")
+MYSQL_SSL = _get_env("MYSQL_SSL")
 
 # --- JWT ---
 JWT_SECRET = _get_env("JWT_SECRET", "change-this-to-a-long-random-string")
 JWT_ALGORITHM = _get_env("JWT_ALGORITHM", "HS256")
 JWT_EXPIRE_HOURS = int(_get_env("JWT_EXPIRE_HOURS", "72"))
+
+# --- Frontend CORS ---
+FRONTEND_URL = _get_env("FRONTEND_URL", "http://localhost:5173")
 
 # --- API endpoints ---
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
@@ -64,8 +69,8 @@ HTTP_TIMEOUT = 15  # seconds
 def refresh_config():
     """Reload environment variables from .env file."""
     global GROQ_API_KEY, TAVILY_API_KEY, GEOAPIFY_API_KEY, OPENWEATHER_API_KEY, GOOGLE_MAPS_API_KEY
-    global MYSQL_HOST, MYSQL_PORT, MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD
-    global JWT_SECRET, JWT_ALGORITHM, JWT_EXPIRE_HOURS, LOADED_ENV_PATH
+    global MYSQL_HOST, MYSQL_PORT, MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD, MYSQL_SSL_CA, MYSQL_SSL
+    global JWT_SECRET, JWT_ALGORITHM, JWT_EXPIRE_HOURS, FRONTEND_URL, LOADED_ENV_PATH
 
     for p in ENV_SEARCH_PATHS:
         if p.exists():
@@ -84,7 +89,10 @@ def refresh_config():
     MYSQL_DATABASE = _get_env("MYSQL_DATABASE", "voyageai")
     MYSQL_USER = _get_env("MYSQL_USER", "voyage")
     MYSQL_PASSWORD = _get_env("MYSQL_PASSWORD", "voyagepass")
+    MYSQL_SSL_CA = _get_env("MYSQL_SSL_CA")
+    MYSQL_SSL = _get_env("MYSQL_SSL")
 
     JWT_SECRET = _get_env("JWT_SECRET", "change-this-to-a-long-random-string")
     JWT_ALGORITHM = _get_env("JWT_ALGORITHM", "HS256")
     JWT_EXPIRE_HOURS = int(_get_env("JWT_EXPIRE_HOURS", "72"))
+    FRONTEND_URL = _get_env("FRONTEND_URL", "http://localhost:5173")
