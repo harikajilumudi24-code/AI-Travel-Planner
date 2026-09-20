@@ -54,15 +54,25 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS configuration allowing Vite frontend
+# Configurable CORS origins for local dev and production
+allowed_origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
+if getattr(config, "FRONTEND_URL", None):
+    frontend_url = config.FRONTEND_URL.strip().rstrip("/")
+    if frontend_url and frontend_url not in allowed_origins:
+        allowed_origins.append(frontend_url)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
 
 @app.get("/")
 def read_root():
@@ -552,3 +562,10 @@ def delete_saved_restaurant(restaurant_id: int, current_user: dict = Depends(aut
     if not success:
         raise HTTPException(status_code=404, detail="Saved restaurant not found")
     return {"message": "Saved restaurant removed"}
+
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run("app.main:app", host="0.0.0.0", port=port)
+
