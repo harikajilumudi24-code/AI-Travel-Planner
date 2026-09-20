@@ -38,7 +38,7 @@ export function Navbar() {
       scrolled ? 'glass-strong shadow-sm' : 'bg-transparent',
     )}>
       <nav className="container-app h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 shrink-0">
+        <Link to={user ? "/trips" : "/"} className="flex items-center gap-2 shrink-0">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-glow">
             <Compass className="w-5 h-5 text-white" />
           </div>

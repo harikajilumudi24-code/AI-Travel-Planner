@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { Mail, Lock, User, Compass, ArrowRight } from 'lucide-react';
 import { Input, Button } from '@/components/ui';
+import { FullPageLoader } from '@/components/ui/LoadingSpinner';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
 
 const HERO_IMG = 'https://images.pexels.com/photos/25026852/pexels-photo-25026852.jpeg?auto=compress&cs=tinysrgb&h=650&w=940';
 
 export default function Register() {
-  const { register } = useAuth();
+  const { user, loading: authLoading, register } = useAuth();
   const navigate = useNavigate();
   const toast = useToast();
   const [name, setName] = useState('');
@@ -17,6 +18,9 @@ export default function Register() {
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  if (authLoading) return <FullPageLoader label="Loading your account…" />;
+  if (user) return <Navigate to="/trips" replace />;
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -35,9 +35,10 @@ export default function App() {
         <ToastProvider>
           <Layout>
             <Routes>
-              <Route path="/" element={withSuspense(Landing)} />
+              <Route path="/" element={withSuspense(Login)} />
               <Route path="/login" element={withSuspense(Login)} />
               <Route path="/register" element={withSuspense(Register)} />
+              <Route path="/home" element={withSuspense(Landing)} />
               <Route path="/explore" element={withSuspense(ExplorePlaces)} />
               <Route path="/restaurants" element={withSuspense(Restaurants)} />
               <Route path="/weather" element={withSuspense(Weather)} />

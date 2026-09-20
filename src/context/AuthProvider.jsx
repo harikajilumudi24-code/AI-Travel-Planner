@@ -8,18 +8,26 @@ export function AuthProvider({ children }) {
 
   const loadUser = useCallback(async () => {
     const token = localStorage.getItem('voyage_token');
-    if (!token) { setLoading(false); return; }
+    if (!token) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
     try {
       const me = await api.me();
       setUser(me);
-    } catch {
+    } catch (err) {
+      console.warn('Authentication token restoration error:', err);
       setToken(null);
+      setUser(null);
     } finally {
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => { loadUser(); }, [loadUser]);
+  useEffect(() => {
+    loadUser();
+  }, [loadUser]);
 
   const login = useCallback(async (email, password) => {
     const data = await api.login({ email, password });
