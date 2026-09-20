@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-gray-200 dark:border-gray-700;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-white text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-100;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+  h1, h2, h3, h4, h5 {
+    font-family: 'Sora', system-ui, sans-serif;
+    @apply tracking-tight;
+  }
+  ::selection {
+    @apply bg-primary-500/30;
+  }
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-700 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400 dark:bg-gray-600;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl border border-white/40 dark:border-white/10;
+  }
+  .glass-strong {
+    @apply bg-white/85 dark:bg-gray-900/80 backdrop-blur-2xl border border-white/50 dark:border-white/10;
+  }
+  .container-app {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  .skeleton {
+    @apply bg-gray-200 dark:bg-gray-800 rounded animate-pulse;
+  }
+  .skeleton-shimmer {
+    background: linear-gradient(90deg, rgba(229,231,235,0.6) 0%, rgba(243,244,246,0.9) 50%, rgba(229,231,235,0.6) 100%);
+    background-size: 1000px 100%;
+    @apply animate-shimmer;
+  }
+}
+
+/* Leaflet map styling */
+.leaflet-container {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  border-radius: 1rem;
+}
+.leaflet-popup-content-wrapper {
+  @apply rounded-2xl shadow-card-hover;
+  border: none;
+}
+.leaflet-popup-content {
+  margin: 0.75rem 1rem;
+  @apply text-sm;
+}
+.leaflet-bar a {
+  @apply rounded-lg !important;
+}
+
+/* Custom map marker pulse */
+@keyframes markerPulse {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+.marker-pulse {
+  position: relative;
+}
+.marker-pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: inherit;
+  animation: markerPulse 1.8s ease-out infinite;
+}
