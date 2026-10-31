@@ -290,7 +290,7 @@ async def groq_chat_completion(messages: list, temperature: float = 0.5) -> str:
                 "model": model,
                 "messages": messages,
                 "temperature": temperature,
-                "max_tokens": 2048,
+                "max_tokens": 8192,
             }
             try:
                 resp = await client.post(config.GROQ_URL, headers=headers, json=payload)
